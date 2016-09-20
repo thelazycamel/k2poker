@@ -1,5 +1,8 @@
+defmodule K2poker.Ranking do
+
 #TODO get the copyright notice thank coder for original work: https://github.com/tokafish/elixir_poker
-defmodule K2Poker.Ranking do
+
+#TODO sanity check cards throw error if duplicates etc
 
 # Hand ranks
   @royal_flush     10
@@ -34,8 +37,6 @@ defmodule K2Poker.Ranking do
   def description({@two_pair, _}),        do: :two_pair
   def description({@one_pair, _}),        do: :one_pair
   def description({@high_card, _}),       do: :high_card
-
-  # OK So K2poker.card starts as "k2" and is converted to a tuple {13, 2}
 
   defp to_tuple(%K2poker.Card{rank: rank, suit: suit}), do: {rank, suit}
 

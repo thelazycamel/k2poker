@@ -1,17 +1,21 @@
 defmodule K2poker.Deck do
 
-  @spec new() :: [K2poker.Card.t]
+  @spec unshuffled_deck() :: [K2poker.Card.t]
 
   @max_shuffles 5000
 
-  def new do
+  def unshuffled_deck do
     for rank <- ranks, suit <- suits do
       %K2poker.Card{rank: rank, suit: suit}
     end
   end
 
   def shuffled do
-    new |> super_shuffle(number_of_shuffles)
+    unshuffled_deck |> super_shuffle(number_of_shuffles)
+  end
+
+  def shuffled_strings do
+    unshuffled_deck |> super_shuffle(number_of_shuffles) |> to_strings
   end
 
   def number_of_shuffles do

@@ -3,12 +3,12 @@ defmodule DeckTest do
   doctest K2poker.Deck
 
   test "creating a new deck of (unshuffled) cards" do
-    deck = K2poker.Deck.new
+    deck = K2poker.Deck.unshuffled_deck
     assert Enum.count(deck) == 52
   end
 
   test "an unshuffled deck should start with the 2 of spades and 2 of clubs" do
-    deck = K2poker.Deck.new
+    deck = K2poker.Deck.unshuffled_deck
     first_card = Enum.at(deck, 0)
     second_card = Enum.at(deck, 1)
     assert %K2poker.Card{:suit => :spades, :rank => 2} == first_card
@@ -39,7 +39,7 @@ defmodule DeckTest do
   end
 
   test "#to_strings should convert the K2Poker.Card structs to strings" do
-    deck = K2poker.Deck.new
+    deck = K2poker.Deck.unshuffled_deck
     string_deck = K2poker.Deck.to_strings(deck)
     first_card = Enum.at(string_deck, 0)
     last_card = Enum.at(string_deck, 51)

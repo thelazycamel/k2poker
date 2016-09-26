@@ -12,31 +12,17 @@ defmodule K2poker.GamePlay do
   # :new awaiting for them to acknowledge the start of the game
 
   def initialize(player1, player2) do
-    %K2poker.Game{
-      players: [
-        %K2poker.Player{id: player1},
-        %K2poker.Player{id: player2}
-      ],
-      deck: K2poker.Deck.shuffled_strings
-    }
-  end
-
-  @spec next_turn(K2poker.Game.t) :: K2poker.Game.t
-
-  # TODO this could probably be a private method and
-  # only called from play
-  def next_turn(game) do
-    if both_players_ready?(game.players) do
-      case game.status do
-        :start -> deal(game)
-        :deal -> flop(game)
-        :flop -> turn(game)
-        :turn -> river(game)
-        :river -> calc_winner(game)
-        _ -> game
-      end
+    if player1 && player2 do
+      game = %K2poker.Game{
+        players: [
+          %K2poker.Player{id: player1},
+          %K2poker.Player{id: player2}
+        ],
+        deck: K2poker.Deck.shuffled_strings
+      }
+      next_turn(game)
     else
-      game
+      {:error, "Game needs 2 players to begin"}
     end
   end
 
@@ -54,14 +40,46 @@ defmodule K2poker.GamePlay do
     end
   end
 
-  @spec discard(K2poker.Game.t, String.t, String.t) :: K2poker.Game.t
+  @spec discard(K2poker.Game.t, String.t, Integer.t) :: K2poker.Game.t
 
-  def discard(game, player_id, card) do
-    #check if the player (status) to see if they can discard the given card
-    #check the game status, if :river then burn both cards
-    #update the players status to :ready
-    {game, player_id, card} #just stopping warning for now
+  def discard(game, player_id, card_index) do
+    {:ok, player, player_index} = get_player(game.players, player_id)
+    if player.status == :new && allowed_to_discard_at_stage?(game.status) do
+      deck = List.delete_at(game.deck, 0) #discard the first card
+      player = case game.status do
+        :deal -> replace_one_card(deck, player, card_index)
+        :flop -> replace_one_card(deck, player, card_index)
+        :turn -> replace_one_card(deck, player, card_index)
+        :river -> replace_both_cards(deck, player)
+      end
+      players = List.replace_at(game.players, player_index, player)
+      deck = deck -- player.cards
+      %{game | deck: deck, players: players}
+    else
+      game
+    end
   end
+
+  # initialize, play and discard should be the only public functions,
+  # all others (below) should be private
+
+  # PRIVATE
+
+  defp next_turn(game) do
+    if both_players_ready?(game.players) do
+      case game.status do
+        :start -> deal(game)
+        :deal -> flop(game)
+        :flop -> turn(game)
+        :turn -> river(game)
+        :river -> calc_winner(game)
+        _ -> game
+      end
+    else
+      game
+    end
+  end
+
 
   # TODO im sure this method could be much smaller
   # and cycle the dealing of the cards to players!
@@ -132,6 +150,24 @@ defmodule K2poker.GamePlay do
 
   defp set_all_players_status(players, status) do
     Enum.map(players, fn(player) -> %{player | status: status} end)
+  end
+
+  defp replace_one_card(deck, player, card_index) do
+    {:ok, new_card} = Enum.fetch(deck, 0)
+    cards = List.replace_at(player.cards, card_index, new_card)
+    %{player | cards: cards, status: :discarded}
+  end
+
+  defp replace_both_cards(deck, player) do
+    {:ok, card1} = Enum.fetch(deck, 0)
+    {:ok, card2} = Enum.fetch(deck, 1)
+    cards = List.replace_at(player.cards, 0, card1)
+    |> List.replace_at(1, card2)
+    %{player | cards: cards, status: :discarded}
+  end
+
+  defp allowed_to_discard_at_stage?(status) do
+    Enum.any?([:deal, :flop, :turn, :river], fn(x) -> x == status end)
   end
 
 end

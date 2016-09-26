@@ -4,18 +4,15 @@ defmodule TurnTest do
 
   test "#next_turn should not turn when players are not ready" do
     game_play = K2poker.GamePlay.initialize("thelazycamel", "bob")
-    game_play = K2poker.GamePlay.next_turn(game_play)
     |> K2poker.GamePlay.play("thelazycamel")
     |> K2poker.GamePlay.play("bob")
     assert(game_play.status == :flop)
-    game_play = K2poker.GamePlay.next_turn(game_play)
     assert Enum.count(game_play.deck) == 44
     assert game_play.status == :flop
   end
 
   setup do
     game_play = K2poker.GamePlay.initialize("thelazycamel", "bob")
-    game_play = K2poker.GamePlay.next_turn(game_play)
     |> K2poker.GamePlay.play("thelazycamel")
     |> K2poker.GamePlay.play("bob")
     |> K2poker.GamePlay.play("thelazycamel")

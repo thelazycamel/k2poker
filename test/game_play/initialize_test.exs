@@ -9,28 +9,32 @@ defmodule InitializeTest do
     [game_play: game_play, player1: player1, player2: player2]
   end
 
-  test "should initialize a new game with a deck of 52", context do
-    assert Enum.count(context.game_play.deck) == 52
+  test "should initialize a new game with a deck of 52 (dealing 2 cards to each player)", context do
+    assert( (
+        Enum.count(context.game_play.deck) +
+        Enum.count(context.player1.cards) +
+        Enum.count(context.player2.cards)
+      )  == 52 )
   end
 
   test "there should be no table cards yet", context do
     assert Enum.count(context.game_play.table_cards) == 0
   end
 
-  test "the game status should be set to :start", context do
-    assert context.game_play.status == :start
+  test "the game status should be set to :deal", context do
+    assert context.game_play.status == :deal
   end
 
   test "player 1 status should be set to new, and they should have 2 cards", context do
     assert context.player1.id == "thelazycamel"
-    assert context.player1.status == :ready
-    assert Enum.count(context.player1.cards) == 0
+    assert context.player1.status == :new
+    assert Enum.count(context.player1.cards) == 2
   end
 
   test "player 2 status should be set to new, and they should have 2 cards", context do
-    assert context.player2.status == :ready
+    assert context.player2.status == :new
     assert context.player2.id == "bob"
-    assert Enum.count(context.player2.cards) == 0
+    assert Enum.count(context.player2.cards) == 2
   end
 
 end

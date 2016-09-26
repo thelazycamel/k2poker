@@ -2,17 +2,8 @@ defmodule FlopTest do
   use ExUnit.Case
   doctest K2poker.GamePlay
 
-  test "#next_turn should not flop when players are not ready" do
-    game_play = K2poker.GamePlay.initialize("thelazycamel", "bob")
-    game_play = K2poker.GamePlay.next_turn(game_play)
-    |> K2poker.GamePlay.next_turn()
-    assert Enum.count(game_play.deck) == 48
-    assert game_play.status == :deal
-  end
-
   setup do
     game_play = K2poker.GamePlay.initialize("thelazycamel", "bob")
-    game_play = K2poker.GamePlay.next_turn(game_play)
     |> K2poker.GamePlay.play("thelazycamel")
     |> K2poker.GamePlay.play("bob")
     player1 = List.first(game_play.players)

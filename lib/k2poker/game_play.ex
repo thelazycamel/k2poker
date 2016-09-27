@@ -7,9 +7,12 @@ defmodule K2poker.GamePlay do
   # TODO possibly, enable game to be initialized with a game,
   # though it might not need it!
   #
-  # TODO perhaps this can call next_turn in order to deal the cards
-  # for the first hand, otherwise the players status should be set to
-  # :new awaiting for them to acknowledge the start of the game
+
+  # initialize
+  # Call this method with 2 player ids to create a new game and deal the first hand
+  # returns a K2poker.Game with the players, deck and status setup
+
+  @spec initialize(String.t, String.t) :: K2poker.Game.t
 
   def initialize(player1, player2) do
     if player1 && player2 do
@@ -26,6 +29,13 @@ defmodule K2poker.GamePlay do
     end
   end
 
+  # *** play ***
+  # Call this method simply passing in the game and the player id,
+  # to set the players status to ready, if both players status' are set
+  # to ready then call the next_turn function, will will automatically
+  # play the next stage of the game
+  # returns a K2poker.Game with the new player status (and game status if next_turn has been called)
+
   @spec play(K2poker.Game.t, K2poker.Player.t) :: K2poker.Game.t
 
   def play(game, player_id) do
@@ -39,6 +49,15 @@ defmodule K2poker.GamePlay do
       game
     end
   end
+
+  # *** discard ***
+  # Call this method to discard one (or both) of the players cards and
+  # take a new one from the deck
+  # Pass in the game, the player_id and the index of the card that is to be
+  # discarded, the action will only be applied if the player status is set to new,
+  # and they are in the correct stage of play, also if the game status is on the river
+  # it will automatically "burn" both cards, no matter which card is requested to discard
+  # returns a K2poker.Game with the players cards and status updated
 
   @spec discard(K2poker.Game.t, String.t, Integer.t) :: K2poker.Game.t
 
@@ -79,7 +98,6 @@ defmodule K2poker.GamePlay do
       game
     end
   end
-
 
   # TODO im sure this method could be much smaller
   # and cycle the dealing of the cards to players!
@@ -131,10 +149,31 @@ defmodule K2poker.GamePlay do
     %{game | status: :river, table_cards: table_cards, deck: deck, players: players}
   end
 
+  # TODO: run the cards through the rankings ->
+  # return the winner and cards, perhaps in another atom on the game struct?
+  #
   defp calc_winner(game) do
-    # run the cards through the rankings ->
-    # return the winner and cards, perhaps in another atom on the game struct?
-    %{game | status: :finish}
+    player1 = List.first(game.players)
+    player2 = List.last(game.players)
+    table_cards = K2poker.Deck.from_strings(game.table_cards)
+    {player1_result, player1_hand} = K2poker.Ranking.best_possible_hand(table_cards, K2poker.Deck.from_strings(player1.cards))
+    {player2_result, player2_hand} = K2poker.Ranking.best_possible_hand(table_cards, K2poker.Deck.from_strings(player2.cards))
+
+    {player1_hand_value, _} = player1_result
+    {player2_hand_value, _} = player2_result
+    player1_hand_description = result_description(player1_hand_value)
+    player2_hand_description = result_description(player2_hand_value)
+
+    #TODO return the description as an atom (it can then used as a translation)
+    result = cond do
+      player1_result > player2_result ->
+        %K2poker.GameResult{id: player1.id, is_draw: false, cards: K2poker.Deck.to_strings(player1_hand), win_description: player1_hand_description, lose_description: player2_hand_description}
+      player1_result < player2_result ->
+        %K2poker.GameResult{id: player2.id, is_draw: false, cards: K2poker.Deck.to_strings(player2_hand), win_description: player2_hand_description, lose_description: player1_hand_description}
+      player1_result == player2_result ->
+        %K2poker.GameResult{id: :draw, is_draw: true, cards: Enum.uniq(K2poker.Deck.to_strings(player1_hand ++ player2_hand)), win_description: player1_hand_description, lose_description: ""}
+    end
+    %{game | status: :finish, result: result}
   end
 
   defp get_player(players, player_id) do
@@ -168,6 +207,21 @@ defmodule K2poker.GamePlay do
 
   defp allowed_to_discard_at_stage?(status) do
     Enum.any?([:deal, :flop, :turn, :river], fn(x) -> x == status end)
+  end
+
+  defp result_description(value) do
+    case value do
+      10 -> :royal_flush
+      9 -> :straight_flush
+      8 -> :four_of_a_kind
+      7 -> :full_house
+      6 -> :flush
+      5 -> :straight
+      4 -> :three_of_a_kind
+      3 -> :two_pair
+      2 -> :one_pair
+      1 -> :high_card
+    end
   end
 
 end

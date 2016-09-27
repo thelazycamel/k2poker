@@ -1,9 +1,9 @@
-defmodule FlopTest do
+defmodule GamePlay.FlopTest do
   use ExUnit.Case
   doctest K2poker.GamePlay
 
   setup do
-    game_play = K2poker.GamePlay.initialize("thelazycamel", "bob")
+    game_play = K2poker.GamePlay.new("thelazycamel", "bob")
     |> K2poker.GamePlay.play("thelazycamel")
     |> K2poker.GamePlay.play("bob")
     player1 = List.first(game_play.players)

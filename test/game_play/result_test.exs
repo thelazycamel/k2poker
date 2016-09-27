@@ -1,9 +1,9 @@
-defmodule WinnersTest do
+defmodule GamePlay.ResultTest do
   use ExUnit.Case
   doctest K2poker.GamePlay
 
   setup do
-    game_play = K2poker.GamePlay.initialize("thelazycamel", "bob")
+    game_play = K2poker.GamePlay.new("thelazycamel", "bob")
     |> K2poker.GamePlay.play("thelazycamel")
     |> K2poker.GamePlay.play("bob")          #flop
     |> K2poker.GamePlay.play("thelazycamel")
@@ -15,10 +15,10 @@ defmodule WinnersTest do
     [game_play: game_play, player1: player1, player2: player2]
   end
 
-  test "game status should be set to :finish", context do
+  test "game status should be set to :finished", context do
     game_play = K2poker.GamePlay.play(context.game_play, "thelazycamel")
     |> K2poker.GamePlay.play("bob")
-    assert game_play.status == :finish
+    assert game_play.status == :finished
   end
 
   test "should return a updated result struct", context do
@@ -40,7 +40,7 @@ defmodule WinnersTest do
     assert game_play.result.status == :win
     assert game_play.result.win_description == :four_of_a_kind
     assert game_play.result.lose_description == :full_house
-    assert game_play.status == :finish
+    assert game_play.status == :finished
   end
 
   test "it should return the winner as player 2", context do
@@ -56,7 +56,7 @@ defmodule WinnersTest do
     assert game_play.result.status == :win
     assert game_play.result.win_description == :four_of_a_kind
     assert game_play.result.lose_description == :straight
-    assert game_play.status == :finish
+    assert game_play.status == :finished
   end
 
   test "it should return the result as a draw", context do
@@ -72,7 +72,7 @@ defmodule WinnersTest do
     assert game_play.result.status == :draw
     assert game_play.result.win_description == :straight
     assert game_play.result.lose_description == ""
-    assert game_play.status == :finish
+    assert game_play.status == :finished
   end
 
 end

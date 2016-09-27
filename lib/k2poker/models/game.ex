@@ -6,11 +6,8 @@ defmodule K2poker.Game do
   # :flop
   # :turn
   # :river
-  # :finish
+  # :finished
 
-  # TODO could players be a map, would be easier to find them by id, however need to check
-  # positioning for dealing out the cards
-  #
   defstruct [
     players: [],
     table_cards: [],

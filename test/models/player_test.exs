@@ -1,4 +1,4 @@
-defmodule PlayerTest do
+defmodule Models.PlayerTest do
   use ExUnit.Case
   doctest K2poker.Player
 

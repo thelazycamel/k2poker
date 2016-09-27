@@ -1,9 +1,9 @@
-defmodule TurnTest do
+defmodule GamePlay.TurnTest do
   use ExUnit.Case
   doctest K2poker.GamePlay
 
   test "#next_turn should not turn when players are not ready" do
-    game_play = K2poker.GamePlay.initialize("thelazycamel", "bob")
+    game_play = K2poker.GamePlay.new("thelazycamel", "bob")
     |> K2poker.GamePlay.play("thelazycamel")
     |> K2poker.GamePlay.play("bob")
     assert(game_play.status == :flop)
@@ -12,7 +12,7 @@ defmodule TurnTest do
   end
 
   setup do
-    game_play = K2poker.GamePlay.initialize("thelazycamel", "bob")
+    game_play = K2poker.GamePlay.new("thelazycamel", "bob")
     |> K2poker.GamePlay.play("thelazycamel")
     |> K2poker.GamePlay.play("bob")
     |> K2poker.GamePlay.play("thelazycamel")

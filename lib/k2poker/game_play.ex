@@ -8,13 +8,14 @@ defmodule K2poker.GamePlay do
   # though it might not need it!
   #
 
-  # initialize
+  # new
+  #
   # Call this method with 2 player ids to create a new game and deal the first hand
   # returns a K2poker.Game with the players, deck and status setup
 
-  @spec initialize(String.t, String.t) :: K2poker.Game.t
+  @spec new(String.t, String.t) :: K2poker.Game.t
 
-  def initialize(player1, player2) do
+  def new(player1, player2) do
     if player1 && player2 do
       game = %K2poker.Game{
         players: [
@@ -29,7 +30,8 @@ defmodule K2poker.GamePlay do
     end
   end
 
-  # *** play ***
+  # play
+  #
   # Call this method simply passing in the game and the player id,
   # to set the players status to ready, if both players status' are set
   # to ready then call the next_turn function, will will automatically
@@ -50,7 +52,8 @@ defmodule K2poker.GamePlay do
     end
   end
 
-  # *** discard ***
+  # discard
+  #
   # Call this method to discard one (or both) of the players cards and
   # take a new one from the deck
   # Pass in the game, the player_id and the index of the card that is to be
@@ -79,8 +82,11 @@ defmodule K2poker.GamePlay do
     end
   end
 
-  # Note to self: I think the rule should be that the the folding player loses half, but the winning player remains
-  # on the same score, so need to pass something back to initialize that
+  # fold
+  # call this method to finish the game with the player given
+  # their status will be set to :folded and the games status to :finish
+  # a GameResult will be returned in the Game Struct with the
+  # player_id and status set to :folded
   #
   @spec fold(K2poker.Game.t, String.t) :: K2poker.Game.t
 
@@ -89,7 +95,7 @@ defmodule K2poker.GamePlay do
     player = %{player | status: :folded}
     players = List.replace_at(game.players, index, player)
     game_result = %K2poker.GameResult{id: player_id, status: :folded, cards: [], win_description: :folded, lose_description: :folded}
-    %{game | players: players, result: game_result, status: :finish}
+    %{game | players: players, result: game_result, status: :finished}
   end
 
   # PRIVATE
@@ -183,7 +189,7 @@ defmodule K2poker.GamePlay do
         %K2poker.GameResult{id: "", status: :draw, cards: Enum.uniq(K2poker.Deck.to_strings(player1_hand ++ player2_hand)), win_description: player1_hand_description, lose_description: ""}
     end
 
-    %{game | status: :finish, result: result}
+    %{game | status: :finished, result: result}
   end
 
   defp get_player(players, player_id) do

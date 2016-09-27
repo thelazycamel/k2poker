@@ -1,9 +1,9 @@
-defmodule DealTest do
+defmodule GamePlay.DealTest do
   use ExUnit.Case
   doctest K2poker.GamePlay
 
   setup do
-    game_play = K2poker.GamePlay.initialize("thelazycamel", "bob")
+    game_play = K2poker.GamePlay.new("thelazycamel", "bob")
     player1 = List.first(game_play.players)
     player2 = List.last(game_play.players)
     [game_play: game_play, player1: player1, player2: player2]

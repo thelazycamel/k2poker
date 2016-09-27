@@ -1,23 +1,23 @@
-defmodule PlayTest do
+defmodule GamePlay.PlayTest do
   use ExUnit.Case
   doctest K2poker.GamePlay
 
   test "#play should update player 1s status to :ready" do
-    game_play = K2poker.GamePlay.initialize("thelazycamel", "bob")
+    game_play = K2poker.GamePlay.new("thelazycamel", "bob")
     game_play = K2poker.GamePlay.play(game_play, "thelazycamel")
     assert List.first(game_play.players).status == :ready
     assert List.last(game_play.players).status == :new
   end
 
   test "#play should update player 2s status to :ready" do
-    game_play = K2poker.GamePlay.initialize("thelazycamel", "bob")
+    game_play = K2poker.GamePlay.new("thelazycamel", "bob")
     game_play = K2poker.GamePlay.play(game_play, "bob")
     assert List.first(game_play.players).status == :new
     assert List.last(game_play.players).status == :ready
   end
 
   setup do
-    game_play = K2poker.GamePlay.initialize("thelazycamel", "bob")
+    game_play = K2poker.GamePlay.new("thelazycamel", "bob")
     |> K2poker.GamePlay.play("thelazycamel")
     |> K2poker.GamePlay.play("bob")
     player1 = List.first(game_play.players)

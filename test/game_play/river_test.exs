@@ -1,9 +1,9 @@
-defmodule RiverTest do
+defmodule GamePlay.RiverTest do
   use ExUnit.Case
   doctest K2poker.GamePlay
 
   test "#next_turn should not goto to river when players are not ready" do
-    game_play = K2poker.GamePlay.initialize("thelazycamel", "bob")
+    game_play = K2poker.GamePlay.new("thelazycamel", "bob")
     |> K2poker.GamePlay.play("thelazycamel")
     |> K2poker.GamePlay.play("bob")
     |> K2poker.GamePlay.play("thelazycamel")
@@ -14,7 +14,7 @@ defmodule RiverTest do
   end
 
   setup do
-    game_play = K2poker.GamePlay.initialize("thelazycamel", "bob")
+    game_play = K2poker.GamePlay.new("thelazycamel", "bob")
     |> K2poker.GamePlay.play("thelazycamel")
     |> K2poker.GamePlay.play("bob")
     |> K2poker.GamePlay.play("thelazycamel")

@@ -1,14 +1,14 @@
-defmodule FoldTest do
+defmodule GamePlay.FoldTest do
   use ExUnit.Case
   doctest K2poker.GamePlay
 
   setup do
-    [game_play: K2poker.GamePlay.initialize("thelazycamel", "bob")]
+    [game_play: K2poker.GamePlay.new("thelazycamel", "bob")]
   end
 
   test "#fold should update GamePlay status to :finish", context do
     game_play = K2poker.GamePlay.fold(context.game_play, "thelazycamel")
-    assert game_play.status == :finish
+    assert game_play.status == :finished
   end
 
   test "#fold should update players status to :folded", context do
@@ -31,6 +31,5 @@ defmodule FoldTest do
     assert game_play.result.win_description == :folded
     assert game_play.result.lose_description == :folded
   end
-
 
 end

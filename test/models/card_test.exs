@@ -1,4 +1,4 @@
-defmodule CardTest do
+defmodule Models.CardTest do
   use ExUnit.Case
   doctest K2poker.Card
 

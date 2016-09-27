@@ -1,9 +1,8 @@
 defmodule K2poker.GameResult do
 
-
   defstruct [
     id: "",
-    is_draw: true,
+    status: :in_play,
     cards: [],
     win_description: "",
     lose_description: ""

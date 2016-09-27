@@ -79,8 +79,18 @@ defmodule K2poker.GamePlay do
     end
   end
 
-  # initialize, play and discard should be the only public functions,
-  # all others (below) should be private
+  # Note to self: I think the rule should be that the the folding player loses half, but the winning player remains
+  # on the same score, so need to pass something back to initialize that
+  #
+  @spec fold(K2poker.Game.t, String.t) :: K2poker.Game.t
+
+  def fold(game, player_id) do
+    {:ok, player, index} = get_player(game.players, player_id)
+    player = %{player | status: :folded}
+    players = List.replace_at(game.players, index, player)
+    game_result = %K2poker.GameResult{id: player_id, status: :folded, cards: [], win_description: :folded, lose_description: :folded}
+    %{game | players: players, result: game_result, status: :finish}
+  end
 
   # PRIVATE
 
@@ -149,10 +159,10 @@ defmodule K2poker.GamePlay do
     %{game | status: :river, table_cards: table_cards, deck: deck, players: players}
   end
 
-  # TODO: run the cards through the rankings ->
-  # return the winner and cards, perhaps in another atom on the game struct?
-  #
   defp calc_winner(game) do
+
+    #TODO look at moving this long method out into another module, just passing the players and cards and returning a K2poker.GameResult back to the game
+
     player1 = List.first(game.players)
     player2 = List.last(game.players)
     table_cards = K2poker.Deck.from_strings(game.table_cards)
@@ -164,15 +174,15 @@ defmodule K2poker.GamePlay do
     player1_hand_description = result_description(player1_hand_value)
     player2_hand_description = result_description(player2_hand_value)
 
-    #TODO return the description as an atom (it can then used as a translation)
     result = cond do
       player1_result > player2_result ->
-        %K2poker.GameResult{id: player1.id, is_draw: false, cards: K2poker.Deck.to_strings(player1_hand), win_description: player1_hand_description, lose_description: player2_hand_description}
+        %K2poker.GameResult{id: player1.id, status: :win, cards: K2poker.Deck.to_strings(player1_hand), win_description: player1_hand_description, lose_description: player2_hand_description}
       player1_result < player2_result ->
-        %K2poker.GameResult{id: player2.id, is_draw: false, cards: K2poker.Deck.to_strings(player2_hand), win_description: player2_hand_description, lose_description: player1_hand_description}
+        %K2poker.GameResult{id: player2.id, status: :win, cards: K2poker.Deck.to_strings(player2_hand), win_description: player2_hand_description, lose_description: player1_hand_description}
       player1_result == player2_result ->
-        %K2poker.GameResult{id: :draw, is_draw: true, cards: Enum.uniq(K2poker.Deck.to_strings(player1_hand ++ player2_hand)), win_description: player1_hand_description, lose_description: ""}
+        %K2poker.GameResult{id: "", status: :draw, cards: Enum.uniq(K2poker.Deck.to_strings(player1_hand ++ player2_hand)), win_description: player1_hand_description, lose_description: ""}
     end
+
     %{game | status: :finish, result: result}
   end
 

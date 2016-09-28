@@ -16,18 +16,14 @@ defmodule K2poker.GamePlay do
   @spec new(String.t, String.t) :: K2poker.Game.t
 
   def new(player1, player2) do
-    if player1 && player2 do
-      game = %K2poker.Game{
-        players: [
-          %K2poker.Player{id: player1},
-          %K2poker.Player{id: player2}
-        ],
-        deck: K2poker.Deck.shuffled_strings
-      }
-      next_turn(game)
-    else
-      {:error, "Game needs 2 players to begin"}
-    end
+    game = %K2poker.Game{
+      players: [
+        %K2poker.Player{id: player1},
+        %K2poker.Player{id: player2}
+      ],
+      deck: K2poker.Deck.shuffled_strings
+    }
+    next_turn(game)
   end
 
   # play
@@ -45,11 +41,7 @@ defmodule K2poker.GamePlay do
     player = %{player | status: :ready}
     players = List.replace_at(game.players, index, player)
     game = %{game | players: players}
-    if both_players_ready?(players) do
-      next_turn(game)
-    else
-      game
-    end
+    if both_players_ready?(players), do: next_turn(game), else: game
   end
 
   # discard
@@ -122,45 +114,34 @@ defmodule K2poker.GamePlay do
     deck = game.deck
     player1 = List.first(game.players)
     player2 = List.last(game.players)
-    #fetch the 4 cards
-    {:ok, card1} = Enum.fetch(deck, 0)
-    {:ok, card2} = Enum.fetch(deck, 1)
-    {:ok, card3} = Enum.fetch(deck, 2)
-    {:ok, card4} = Enum.fetch(deck, 3)
-    #add the cards and new status to the players
-    player1 = %{player1 | cards: [card1, card3], status: :new}
-    player2 = %{player2 | cards: [card2, card4], status: :new}
-    #remove the cards from the deck
-    deck = deck -- [card1, card2, card3, card4]
-    #update and return the game
-    %{game | status: :deal, deck: deck, players: [player1, player2]}
+    {:ok, deck, player1_cards} = deal_card(deck, player1.cards)
+    {:ok, deck, player2_cards} = deal_card(deck, player2.cards)
+    {:ok, deck, player1_cards} = deal_card(deck, player1_cards)
+    {:ok, deck, player2_cards} = deal_card(deck, player2_cards)
+    players = [ %{player1 | cards: player1_cards}, %{player2 | cards: player2_cards} ]
+    players = set_all_players_status(players, :new)
+    %{game | status: :deal, deck: deck, players: players}
   end
 
   defp flop(game) do
     deck = List.delete_at(game.deck, 0) #discard the first card
-    {:ok, card1} = Enum.fetch(deck, 0)
-    {:ok, card2} = Enum.fetch(deck, 1)
-    {:ok, card3} = Enum.fetch(deck, 2)
-    table_cards = [card1, card2, card3]
-    deck = deck -- [card1, card2, card3]
+    {:ok, deck, table_cards} = deal_card(deck, game.table_cards)
+    {:ok, deck, table_cards} = deal_card(deck, table_cards)
+    {:ok, deck, table_cards} = deal_card(deck, table_cards)
     players = set_all_players_status(game.players, :new)
     %{game | status: :flop, table_cards: table_cards, deck: deck, players: players}
   end
 
   defp turn(game) do
     deck = List.delete_at(game.deck, 0) #discard the first
-    {:ok, card} = Enum.fetch(deck, 0)
-    table_cards = List.insert_at(game.table_cards, -1, card)
-    deck = deck -- [card]
+    {:ok, deck, table_cards} = deal_card(deck, game.table_cards)
     players = set_all_players_status(game.players, :new)
     %{game | status: :turn, table_cards: table_cards, deck: deck, players: players}
   end
 
   defp river(game) do
     deck = List.delete_at(game.deck, 0) #discard the first
-    {:ok, card} = Enum.fetch(deck, 0)
-    table_cards = List.insert_at(game.table_cards, -1, card)
-    deck = deck -- [card]
+    {:ok, deck, table_cards} = deal_card(deck, game.table_cards)
     players = set_all_players_status(game.players, :new)
     %{game | status: :river, table_cards: table_cards, deck: deck, players: players}
   end
@@ -205,6 +186,13 @@ defmodule K2poker.GamePlay do
 
   defp set_all_players_status(players, status) do
     Enum.map(players, fn(player) -> %{player | status: status} end)
+  end
+
+  defp deal_card(deck, card_array) do
+    {:ok, new_card} = Enum.fetch(deck, 0)
+    cards = List.insert_at(card_array, -1, new_card)
+    deck = deck -- [new_card]
+    {:ok, deck, cards}
   end
 
   defp replace_one_card(deck, player, card_index) do

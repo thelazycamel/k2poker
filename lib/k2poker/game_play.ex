@@ -147,30 +147,8 @@ defmodule K2poker.GamePlay do
   end
 
   defp calc_winner(game) do
-
-    #TODO look at moving this long method out into another module, just passing the players and cards and returning a K2poker.GameResult back to the game
-
-    player1 = List.first(game.players)
-    player2 = List.last(game.players)
-    table_cards = K2poker.Deck.from_strings(game.table_cards)
-    {player1_result, player1_hand} = K2poker.Ranking.best_possible_hand(table_cards, K2poker.Deck.from_strings(player1.cards))
-    {player2_result, player2_hand} = K2poker.Ranking.best_possible_hand(table_cards, K2poker.Deck.from_strings(player2.cards))
-
-    {player1_hand_value, _} = player1_result
-    {player2_hand_value, _} = player2_result
-    player1_hand_description = result_description(player1_hand_value)
-    player2_hand_description = result_description(player2_hand_value)
-
-    result = cond do
-      player1_result > player2_result ->
-        %K2poker.GameResult{id: player1.id, status: :win, cards: K2poker.Deck.to_strings(player1_hand), win_description: player1_hand_description, lose_description: player2_hand_description}
-      player1_result < player2_result ->
-        %K2poker.GameResult{id: player2.id, status: :win, cards: K2poker.Deck.to_strings(player2_hand), win_description: player2_hand_description, lose_description: player1_hand_description}
-      player1_result == player2_result ->
-        %K2poker.GameResult{id: "", status: :draw, cards: Enum.uniq(K2poker.Deck.to_strings(player1_hand ++ player2_hand)), win_description: player1_hand_description, lose_description: ""}
-    end
-
-    %{game | status: :finished, result: result}
+    game = K2poker.ResultCalculator.calculate(game)
+    %{game | status: :finished}
   end
 
   defp get_player(players, player_id) do
@@ -213,19 +191,5 @@ defmodule K2poker.GamePlay do
     Enum.any?([:deal, :flop, :turn, :river], fn(x) -> x == status end)
   end
 
-  defp result_description(value) do
-    case value do
-      10 -> :royal_flush
-      9 -> :straight_flush
-      8 -> :four_of_a_kind
-      7 -> :full_house
-      6 -> :flush
-      5 -> :straight
-      4 -> :three_of_a_kind
-      3 -> :two_pair
-      2 -> :one_pair
-      1 -> :high_card
-    end
-  end
 
 end

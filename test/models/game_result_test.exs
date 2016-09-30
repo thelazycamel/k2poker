@@ -5,7 +5,7 @@ defmodule Models.GameResultTest do
 
   setup do
     [ game_result: %K2poker.GameResult{
-        id: "player_1",
+        player_id: "player_1",
         status: :win,
         cards: ["Ac", "Kc", "Qc", "Jc", "Tc"],
         win_description: :royal_flush,
@@ -15,7 +15,7 @@ defmodule Models.GameResultTest do
   end
 
   test "it should hold the :id (player_id)", context do
-    assert context.game_result.id == "player_1"
+    assert context.game_result.player_id == "player_1"
   end
 
   test "it should hold status as an atom", context do

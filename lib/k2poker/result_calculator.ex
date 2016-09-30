@@ -27,11 +27,11 @@ defmodule K2poker.ResultCalculator do
   defp create_result(p1, p2) do
     result = cond do
       p1.result > p2.result ->
-        %K2poker.GameResult{id: p1.id, status: :win, cards: p1.hand, win_description: p1.description, lose_description: p2.description}
+        %K2poker.GameResult{player_id: p1.id, status: :win, cards: p1.hand, win_description: p1.description, lose_description: p2.description}
       p1.result < p2.result ->
-        %K2poker.GameResult{id: p2.id, status: :win, cards: p2.hand, win_description: p2.description, lose_description: p1.description}
+        %K2poker.GameResult{player_id: p2.id, status: :win, cards: p2.hand, win_description: p2.description, lose_description: p1.description}
       p1.result == p2.result ->
-        %K2poker.GameResult{id: "", status: :draw, cards: Enum.uniq(p1.hand ++ p2.hand), win_description: p1.description, lose_description: ""}
+        %K2poker.GameResult{player_id: "", status: :draw, cards: Enum.uniq(p1.hand ++ p2.hand), win_description: p1.description, lose_description: ""}
     end
     result
   end

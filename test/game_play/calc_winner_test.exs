@@ -15,7 +15,7 @@ defmodule GamePlay.ResultTest do
     [game_play: game_play, player1: player1, player2: player2]
   end
 
-  test "game status should be set to :finished", context do
+  test "game status' should be set to :finished", context do
     game_play = K2poker.GamePlay.play(context.game_play, "thelazycamel")
     |> K2poker.GamePlay.play("bob")
     assert game_play.status == :finished
@@ -35,12 +35,17 @@ defmodule GamePlay.ResultTest do
     player2 = %{context.player2 | cards: player2_cards, status: :ready}
     game_play = %{context.game_play | status: :river, players: [player1, player2], table_cards: table_cards}
     game_play = K2poker.GamePlay.play(game_play, player1.id)
-    assert game_play.result.id == "thelazycamel"
+    assert game_play.result.player_id == "thelazycamel"
     assert Enum.sort(game_play.result.cards) == Enum.sort(["Ad", "As", "Ah", "Ac", "Kh"])
     assert game_play.result.status == :win
     assert game_play.result.win_description == :four_of_a_kind
     assert game_play.result.lose_description == :full_house
     assert game_play.status == :finished
+
+    player1 = List.first(game_play.players)
+    player2 = List.last(game_play.players)
+    assert player1.status == :win
+    assert player2.status == :lose
   end
 
   test "it should return the winner as player 2", context do
@@ -51,12 +56,17 @@ defmodule GamePlay.ResultTest do
     player2 = %{context.player2 | cards: player2_cards, status: :ready}
     game_play = %{context.game_play | status: :river, players: [player1, player2], table_cards: table_cards}
     game_play = K2poker.GamePlay.play(game_play, player1.id)
-    assert game_play.result.id == "bob"
+    assert game_play.result.player_id == "bob"
     assert Enum.sort(game_play.result.cards) == Enum.sort(["Ad", "As", "Ah", "Ac", "Kh"])
     assert game_play.result.status == :win
     assert game_play.result.win_description == :four_of_a_kind
     assert game_play.result.lose_description == :straight
     assert game_play.status == :finished
+
+    player1 = List.first(game_play.players)
+    player2 = List.last(game_play.players)
+    assert player1.status == :lose
+    assert player2.status == :win
   end
 
   test "it should return the result as a draw", context do
@@ -67,12 +77,17 @@ defmodule GamePlay.ResultTest do
     player2 = %{context.player2 | cards: player2_cards, status: :ready}
     game_play = %{context.game_play | status: :river, players: [player1, player2], table_cards: table_cards}
     game_play = K2poker.GamePlay.play(game_play, player1.id)
-    assert game_play.result.id == ""
+    assert game_play.result.player_id == ""
     assert Enum.sort(game_play.result.cards) == Enum.sort(["Ah", "Js", "Kc", "Kd", "Qc", "Th", "Ts"])
     assert game_play.result.status == :draw
     assert game_play.result.win_description == :straight
     assert game_play.result.lose_description == ""
     assert game_play.status == :finished
+
+    player1 = List.first(game_play.players)
+    player2 = List.last(game_play.players)
+    assert player1.status == :draw
+    assert player2.status == :draw
   end
 
 end

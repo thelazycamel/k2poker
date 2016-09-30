@@ -23,7 +23,7 @@ defmodule GamePlay.FoldTest do
 
   test "#fold should update result id to the folded player id", context do
     game_play = K2poker.GamePlay.fold(context.game_play, "thelazycamel")
-    assert game_play.result.id == "thelazycamel"
+    assert game_play.result.player_id == "thelazycamel"
   end
 
   test "#fold should update result descriptions to :folded", context do

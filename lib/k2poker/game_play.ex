@@ -4,10 +4,6 @@ defmodule K2poker.GamePlay do
   # and taking players turns, dealing out the flop turn, river and
   # returning the winner (at the appropriate times)
 
-  # TODO possibly, enable game to be initialized with a game,
-  # though it might not need it!
-  #
-
   # new
   #
   # Call this method with 2 player ids to create a new game and deal the first hand
@@ -86,7 +82,7 @@ defmodule K2poker.GamePlay do
     {:ok, player, index} = get_player(game.players, player_id)
     player = %{player | status: :folded}
     players = List.replace_at(game.players, index, player)
-    game_result = %K2poker.GameResult{id: player_id, status: :folded, cards: [], win_description: :folded, lose_description: :folded}
+    game_result = %K2poker.GameResult{player_id: player_id, status: :folded, cards: [], win_description: :folded, lose_description: :folded}
     %{game | players: players, result: game_result, status: :finished}
   end
 
@@ -148,7 +144,17 @@ defmodule K2poker.GamePlay do
 
   defp calc_winner(game) do
     game = K2poker.ResultCalculator.calculate(game)
-    %{game | status: :finished}
+    player1 = List.first(game.players)
+    player2 = List.last(game.players)
+    players = cond do
+      game.result.player_id == player1.id ->
+        [ set_player_status(player1, :win), set_player_status(player2, :lose) ]
+      game.result.player_id == player2.id ->
+        [ set_player_status(player1, :lose), set_player_status(player2, :win) ]
+      true ->
+        set_all_players_status(game.players, :draw)
+    end
+    %{game | status: :finished, players: players}
   end
 
   defp get_player(players, player_id) do
@@ -160,6 +166,10 @@ defmodule K2poker.GamePlay do
 
   defp both_players_ready?(players) do
     Enum.all?(players, fn(player) -> player.status == :ready end)
+  end
+
+  defp set_player_status(player, status) do
+    %{player | status: status}
   end
 
   defp set_all_players_status(players, status) do

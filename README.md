@@ -22,7 +22,7 @@
 
 #API:
 
-Available methods that can be passed to K2Poker.GamePlay
+Available methods that can be passed to K2Poker
 
 #new
 
@@ -35,7 +35,7 @@ Available methods that can be passed to K2Poker.GamePlay
   |> use the return value to play / discard or fold:
 
   eg.
-  game = K2poker.GamePlay.new("bob", "stu")
+  game = K2poker.new("bob", "stu")
 
 #play
   This will update the players status to :ready
@@ -46,7 +46,7 @@ Available methods that can be passed to K2Poker.GamePlay
   |> returns the updated K2poker.Game Struct
 
   eg.
-  game = K2poker.GamePlay.play(game, "bob")
+  game = K2poker.play(game, "bob")
 
 #discard
   This will discard the given card and deal the given player a new card
@@ -57,7 +57,7 @@ Available methods that can be passed to K2Poker.GamePlay
   |> returns the updated K2poker.Game Struct
 
   eg.
-  game = K2poker.GamePlay.discard(game, "stu", 0)
+  game = K2poker.discard(game, "stu", 0)
 
 #fold
   This will finish the game, setting the players status to :folded
@@ -65,7 +65,7 @@ Available methods that can be passed to K2Poker.GamePlay
   |> returns an updated K2poker.Game Stuct with the status's and result updated
 
   eg.
-  game = K2poker.GamePlay.fold(game, "stu")
+  game = K2poker.fold(game, "stu")
 
 Once the game has reached the final turn (i.e. both players have played
 on the :river) the cards are checked and winning result calculated, this result

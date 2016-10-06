@@ -9,7 +9,7 @@ defmodule K2poker.Game do
   # :finished
 
   defstruct [
-    players: [],
+    players: [%K2poker.Player{}, %K2poker.Player{}],
     table_cards: [],
     deck: [],
     status: :start,

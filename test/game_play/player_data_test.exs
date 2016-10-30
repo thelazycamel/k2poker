@@ -12,10 +12,6 @@ defmodule GamePlay.PlayerDataTest do
     [game_play: game_play, player1: player1, player2: player2, player_data: player_data]
   end
 
-  test "player_data returns the player_id", context do
-    assert context.player_data.player_id == context.player1.id
-  end
-
   test "player_data returns the players cards", context do
     assert List.first(context.player_data.cards) == List.first(context.player1.cards)
     assert List.last(context.player_data.cards) == List.last(context.player1.cards)

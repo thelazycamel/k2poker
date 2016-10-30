@@ -96,7 +96,7 @@ defmodule K2poker.GamePlay do
     end
     #only return ready or new for the other_player status, not discard!
     other_player_status = if (other_player.status == :ready), do: :ready, else: :new
-    %{player_id: player.id,
+    %{
       cards: player.cards,
       player_status: player.status,
       other_player_status: other_player_status,

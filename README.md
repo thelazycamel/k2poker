@@ -71,6 +71,20 @@ Once the game has reached the final turn (i.e. both players have played
 on the :river) the cards are checked and winning result calculated, this result
 is placed in the :result atom of the K2poker.Game Struct
 
+  eg.
+  game = K2poker.fold(game, "stu")
+
+#player_data
+
+  This will return a map of only the given players information, that can
+  be passed down the line to the given player, so he/she does not
+  receive the other players info or the deck
+  |> requires the current K2poker.Game Struct and the player_id
+  |> returns a map of key/values
+
+  eg.
+  player_data = K2poker.player_data(game, "stu")
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:

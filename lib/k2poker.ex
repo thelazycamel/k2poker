@@ -22,4 +22,8 @@ defmodule K2poker do
     GamePlay.fold(game, player_id)
   end
 
+  def player_data(game, player_id) do
+    GamePlay.player_data(game, player_id)
+  end
+
 end

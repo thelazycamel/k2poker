@@ -86,6 +86,26 @@ defmodule K2poker.GamePlay do
     %{game | players: players, result: game_result, status: :finished}
   end
 
+  @spec player_data(K2poker.Game.t, String.t) :: Map.t
+
+  def player_data(game, player_id) do
+    {:ok, player, index} = get_player(game.players, player_id)
+    other_player = case index do
+      0 -> Enum.at(game.players, 1)
+      1 -> Enum.at(game.players, 0)
+    end
+    #only return ready or new for the other_player status, not discard!
+    other_player_status = if (other_player.status == :ready), do: :ready, else: :new
+    %{player_id: player.id,
+      cards: player.cards,
+      player_status: player.status,
+      other_player_status: other_player_status,
+      table_cards: game.table_cards,
+      status: game.status,
+      result: game.result
+    }
+  end
+
   # PRIVATE
 
   defp next_turn(game) do

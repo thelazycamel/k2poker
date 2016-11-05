@@ -109,17 +109,13 @@ defmodule K2poker.GamePlay do
   # PRIVATE
 
   defp next_turn(game) do
-    if both_players_ready?(game.players) do
-      case game.status do
+    case game.status do
         :start -> deal(game)
         :deal -> flop(game)
         :flop -> turn(game)
         :turn -> river(game)
         :river -> calc_winner(game)
         _ -> game
-      end
-    else
-      game
     end
   end
 

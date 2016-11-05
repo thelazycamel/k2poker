@@ -27,27 +27,27 @@ defmodule K2poker.ResultCalculator do
   defp create_result(p1, p2) do
     result = cond do
       p1.result > p2.result ->
-        %K2poker.GameResult{player_id: p1.id, status: :win, cards: p1.hand, win_description: p1.description, lose_description: p2.description}
+        %K2poker.GameResult{player_id: p1.id, status: "win", cards: p1.hand, win_description: p1.description, lose_description: p2.description}
       p1.result < p2.result ->
-        %K2poker.GameResult{player_id: p2.id, status: :win, cards: p2.hand, win_description: p2.description, lose_description: p1.description}
+        %K2poker.GameResult{player_id: p2.id, status: "win", cards: p2.hand, win_description: p2.description, lose_description: p1.description}
       p1.result == p2.result ->
-        %K2poker.GameResult{player_id: "", status: :draw, cards: Enum.uniq(p1.hand ++ p2.hand), win_description: p1.description, lose_description: ""}
+        %K2poker.GameResult{player_id: "", status: "draw", cards: Enum.uniq(p1.hand ++ p2.hand), win_description: p1.description, lose_description: ""}
     end
     result
   end
 
   defp result_description(value) do
     case value do
-      10 -> :royal_flush
-      9 -> :straight_flush
-      8 -> :four_of_a_kind
-      7 -> :full_house
-      6 -> :flush
-      5 -> :straight
-      4 -> :three_of_a_kind
-      3 -> :two_pair
-      2 -> :one_pair
-      1 -> :high_card
+      10 -> "royal_flush"
+      9 -> "straight_flush"
+      8 -> "four_of_a_kind"
+      7 -> "full_house"
+      6 -> "flush"
+      5 -> "straight"
+      4 -> "three_of_a_kind"
+      3 -> "two_pair"
+      2 -> "one_pair"
+      1 -> "high_card"
     end
   end
 

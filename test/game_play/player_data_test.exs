@@ -26,21 +26,21 @@ defmodule GamePlay.PlayerDataTest do
   end
 
   test "player_data returns the game status", context do
-    assert context.player_data.status == :flop
+    assert context.player_data.status == "flop"
   end
 
   test "player_data returns the player status", context do
-    assert context.player_data.player_status == :new
+    assert context.player_data.player_status == "new"
   end
 
   test "player_data returns the other players status", context do
-    assert context.player_data.other_player_status == :new
+    assert context.player_data.other_player_status == "new"
     game_play = K2poker.discard(context.game_play, context.player2.id, 0)
     player_data = K2poker.player_data(game_play, context.player1.id)
-    assert player_data.other_player_status == :new
+    assert player_data.other_player_status == "new"
     game_play = K2poker.play(game_play, context.player2.id)
     player_data = K2poker.player_data(game_play, context.player1.id)
-    assert player_data.other_player_status == :ready
+    assert player_data.other_player_status == "ready"
   end
 
   test "player_data returns game_result if the game is complete", context do
@@ -54,7 +54,7 @@ defmodule GamePlay.PlayerDataTest do
     |> K2poker.play(player2)
     result = game_play.result
     player_data = K2poker.player_data(game_play, player1)
-    assert(player_data.status == :finished)
+    assert(player_data.status == "finished")
     assert(player_data.result.status == result.status)
     assert(player_data.result.player_id == result.player_id)
     assert(player_data.result.cards == result.cards)

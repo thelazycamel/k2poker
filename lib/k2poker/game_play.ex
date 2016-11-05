@@ -34,7 +34,7 @@ defmodule K2poker.GamePlay do
 
   def play(game, player_id) do
     {:ok, player, index} = get_player(game.players, player_id)
-    player = %{player | status: :ready}
+    player = %{player | status: "ready"}
     players = List.replace_at(game.players, index, player)
     game = %{game | players: players}
     if both_players_ready?(players), do: next_turn(game), else: game
@@ -54,13 +54,13 @@ defmodule K2poker.GamePlay do
 
   def discard(game, player_id, card_index) do
     {:ok, player, player_index} = get_player(game.players, player_id)
-    if player.status == :new && allowed_to_discard_at_stage?(game.status) do
+    if player.status == "new" && allowed_to_discard_at_stage?(game.status) do
       deck = List.delete_at(game.deck, 0) #discard the first card
       player = case game.status do
-        :deal -> replace_one_card(deck, player, card_index)
-        :flop -> replace_one_card(deck, player, card_index)
-        :turn -> replace_one_card(deck, player, card_index)
-        :river -> replace_both_cards(deck, player)
+        "deal" -> replace_one_card(deck, player, card_index)
+        "flop" -> replace_one_card(deck, player, card_index)
+        "turn" -> replace_one_card(deck, player, card_index)
+        "river" -> replace_both_cards(deck, player)
       end
       players = List.replace_at(game.players, player_index, player)
       deck = deck -- player.cards
@@ -72,18 +72,18 @@ defmodule K2poker.GamePlay do
 
   # fold
   # call this method to finish the game with the player given
-  # their status will be set to :folded and the games status to :finish
+  # their status will be set to folded and the games status to finish
   # a GameResult will be returned in the Game Struct with the
-  # player_id and status set to :folded
+  # player_id and status set to folded
   #
   @spec fold(K2poker.Game.t, String.t) :: K2poker.Game.t
 
   def fold(game, player_id) do
     {:ok, player, index} = get_player(game.players, player_id)
-    player = %{player | status: :folded}
+    player = %{player | status: "folded"}
     players = List.replace_at(game.players, index, player)
-    game_result = %K2poker.GameResult{player_id: player_id, status: :folded, cards: [], win_description: :folded, lose_description: :folded}
-    %{game | players: players, result: game_result, status: :finished}
+    game_result = %K2poker.GameResult{player_id: player_id, status: "folded", cards: [], win_description: "folded", lose_description: "folded"}
+    %{game | players: players, result: game_result, status: "finished"}
   end
 
   @spec player_data(K2poker.Game.t, String.t) :: Map.t
@@ -95,7 +95,7 @@ defmodule K2poker.GamePlay do
       1 -> Enum.at(game.players, 0)
     end
     #only return ready or new for the other_player status, not discard!
-    other_player_status = if (other_player.status == :ready), do: :ready, else: :new
+    other_player_status = if (other_player.status == "ready"), do: "ready", else: "new"
     %{
       cards: player.cards,
       player_status: player.status,
@@ -110,11 +110,11 @@ defmodule K2poker.GamePlay do
 
   defp next_turn(game) do
     case game.status do
-        :start -> deal(game)
-        :deal -> flop(game)
-        :flop -> turn(game)
-        :turn -> river(game)
-        :river -> calc_winner(game)
+        "start" -> deal(game)
+        "deal" -> flop(game)
+        "flop" -> turn(game)
+        "turn" -> river(game)
+        "river" -> calc_winner(game)
         _ -> game
     end
   end
@@ -131,8 +131,8 @@ defmodule K2poker.GamePlay do
     {:ok, deck, player1_cards} = deal_card(deck, player1_cards)
     {:ok, deck, player2_cards} = deal_card(deck, player2_cards)
     players = [ %{player1 | cards: player1_cards}, %{player2 | cards: player2_cards} ]
-    players = set_all_players_status(players, :new)
-    %{game | status: :deal, deck: deck, players: players}
+    players = set_all_players_status(players, "new")
+    %{game | status: "deal", deck: deck, players: players}
   end
 
   defp flop(game) do
@@ -140,22 +140,22 @@ defmodule K2poker.GamePlay do
     {:ok, deck, table_cards} = deal_card(deck, game.table_cards)
     {:ok, deck, table_cards} = deal_card(deck, table_cards)
     {:ok, deck, table_cards} = deal_card(deck, table_cards)
-    players = set_all_players_status(game.players, :new)
-    %{game | status: :flop, table_cards: table_cards, deck: deck, players: players}
+    players = set_all_players_status(game.players, "new")
+    %{game | status: "flop", table_cards: table_cards, deck: deck, players: players}
   end
 
   defp turn(game) do
     deck = List.delete_at(game.deck, 0) #discard the first
     {:ok, deck, table_cards} = deal_card(deck, game.table_cards)
-    players = set_all_players_status(game.players, :new)
-    %{game | status: :turn, table_cards: table_cards, deck: deck, players: players}
+    players = set_all_players_status(game.players, "new")
+    %{game | status: "turn", table_cards: table_cards, deck: deck, players: players}
   end
 
   defp river(game) do
     deck = List.delete_at(game.deck, 0) #discard the first
     {:ok, deck, table_cards} = deal_card(deck, game.table_cards)
-    players = set_all_players_status(game.players, :new)
-    %{game | status: :river, table_cards: table_cards, deck: deck, players: players}
+    players = set_all_players_status(game.players, "new")
+    %{game | status: "river", table_cards: table_cards, deck: deck, players: players}
   end
 
   defp calc_winner(game) do
@@ -164,13 +164,13 @@ defmodule K2poker.GamePlay do
     player2 = List.last(game.players)
     players = cond do
       game.result.player_id == player1.id ->
-        [ set_player_status(player1, :win), set_player_status(player2, :lose) ]
+        [ set_player_status(player1, "win"), set_player_status(player2, "lose") ]
       game.result.player_id == player2.id ->
-        [ set_player_status(player1, :lose), set_player_status(player2, :win) ]
+        [ set_player_status(player1, "lose"), set_player_status(player2, "win") ]
       true ->
-        set_all_players_status(game.players, :draw)
+        set_all_players_status(game.players, "draw")
     end
-    %{game | status: :finished, players: players}
+    %{game | status: "finished", players: players}
   end
 
   defp get_player(players, player_id) do
@@ -181,7 +181,7 @@ defmodule K2poker.GamePlay do
   end
 
   defp both_players_ready?(players) do
-    Enum.all?(players, fn(player) -> player.status == :ready end)
+    Enum.all?(players, fn(player) -> player.status == "ready" end)
   end
 
   defp set_player_status(player, status) do
@@ -202,7 +202,7 @@ defmodule K2poker.GamePlay do
   defp replace_one_card(deck, player, card_index) do
     {:ok, new_card} = Enum.fetch(deck, 0)
     cards = List.replace_at(player.cards, card_index, new_card)
-    %{player | cards: cards, status: :discarded}
+    %{player | cards: cards, status: "discarded"}
   end
 
   defp replace_both_cards(deck, player) do
@@ -210,12 +210,11 @@ defmodule K2poker.GamePlay do
     {:ok, card2} = Enum.fetch(deck, 1)
     cards = List.replace_at(player.cards, 0, card1)
     |> List.replace_at(1, card2)
-    %{player | cards: cards, status: :discarded}
+    %{player | cards: cards, status: "discarded"}
   end
 
   defp allowed_to_discard_at_stage?(status) do
-    Enum.any?([:deal, :flop, :turn, :river], fn(x) -> x == status end)
+    Enum.any?(["deal", "flop", "turn", "river"], fn(x) -> x == status end)
   end
-
 
 end

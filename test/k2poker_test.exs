@@ -8,13 +8,13 @@ defmodule K2pokerTest do
 
   test "K2poker.new/2 starts a new game" do
     game = K2poker.new("bob", "stu")
-    assert game.status == :deal
+    assert game.status == "deal"
   end
 
   test "K2poker.play/2 continues play" do
     game = K2poker.new("bob", "stu")
     game = K2poker.play(game, "stu")
-    assert List.last(game.players).status == :ready
+    assert List.last(game.players).status == "ready"
   end
 
   test "K2poker.discard/3 discards the given card" do
@@ -29,8 +29,8 @@ defmodule K2pokerTest do
   test "K2poker.fold/2 finished the game with player folded" do
     game = K2poker.new("bob", "stu")
     game = K2poker.fold(game, "stu")
-    assert List.last(game.players).status == :folded
-    assert game.status == :finished
+    assert List.last(game.players).status == "folded"
+    assert game.status == "finished"
   end
 
 end

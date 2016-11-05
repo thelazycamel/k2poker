@@ -19,9 +19,9 @@ defmodule ResultCalculatorTest do
     game_play = K2poker.ResultCalculator.calculate(game_play)
     assert game_play.result.player_id == "thelazycamel"
     assert Enum.sort(game_play.result.cards) == Enum.sort(["Ad", "As", "Ah", "Ac", "Kh"])
-    assert game_play.result.status == :win
-    assert game_play.result.win_description == :four_of_a_kind
-    assert game_play.result.lose_description == :full_house
+    assert game_play.result.status == "win"
+    assert game_play.result.win_description == "four_of_a_kind"
+    assert game_play.result.lose_description == "full_house"
   end
 
   test "it should return the winner as player 2", context do
@@ -34,9 +34,9 @@ defmodule ResultCalculatorTest do
     game_play = K2poker.ResultCalculator.calculate(game_play)
     assert game_play.result.player_id == "bob"
     assert Enum.sort(game_play.result.cards) == Enum.sort(["Ad", "As", "Ah", "Ac", "Kh"])
-    assert game_play.result.status == :win
-    assert game_play.result.win_description == :four_of_a_kind
-    assert game_play.result.lose_description == :straight
+    assert game_play.result.status == "win"
+    assert game_play.result.win_description == "four_of_a_kind"
+    assert game_play.result.lose_description == "straight"
   end
 
   test "it should return the result as a draw", context do
@@ -49,8 +49,8 @@ defmodule ResultCalculatorTest do
     game_play = K2poker.ResultCalculator.calculate(game_play)
     assert game_play.result.player_id == ""
     assert Enum.sort(game_play.result.cards) == Enum.sort(["Ah", "Js", "Kc", "Kd", "Qc", "Th", "Ts"])
-    assert game_play.result.status == :draw
-    assert game_play.result.win_description == :straight
+    assert game_play.result.status == "draw"
+    assert game_play.result.win_description == "straight"
     assert game_play.result.lose_description == ""
   end
 

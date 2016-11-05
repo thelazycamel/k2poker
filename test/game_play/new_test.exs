@@ -22,17 +22,17 @@ defmodule GamePlay.NewTest do
   end
 
   test "the game status should be set to :deal", context do
-    assert context.game_play.status == :deal
+    assert context.game_play.status == "deal"
   end
 
   test "player 1 status should be set to new, and they should have 2 cards", context do
     assert context.player1.id == "thelazycamel"
-    assert context.player1.status == :new
+    assert context.player1.status == "new"
     assert Enum.count(context.player1.cards) == 2
   end
 
   test "player 2 status should be set to new, and they should have 2 cards", context do
-    assert context.player2.status == :new
+    assert context.player2.status == "new"
     assert context.player2.id == "bob"
     assert Enum.count(context.player2.cards) == 2
   end

@@ -24,7 +24,7 @@ defmodule Models.GameTest do
 
   test "it should set the status to :start", context do
     game = %K2poker.Game{deck: context.deck, players: context[:players]}
-    assert game.status == :start
+    assert game.status == "start"
   end
 
 end

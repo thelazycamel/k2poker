@@ -34,6 +34,7 @@ defmodule K2poker.ResultCalculator do
       3 -> "two_pair"
       2 -> "one_pair"
       1 -> "high_card"
+      0 -> ""
     end
   end
 

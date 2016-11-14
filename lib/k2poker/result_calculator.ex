@@ -22,21 +22,7 @@ defmodule K2poker.ResultCalculator do
     %{game | result: create_result(player1_result_map, player2_result_map)}
   end
 
-  # check the results from the player rankings and build a K2poker.GameResult that is added to the :result key of the Game
-  #
-  defp create_result(p1, p2) do
-    result = cond do
-      p1.result > p2.result ->
-        %K2poker.GameResult{player_id: p1.id, status: "win", cards: p1.hand, win_description: p1.description, lose_description: p2.description}
-      p1.result < p2.result ->
-        %K2poker.GameResult{player_id: p2.id, status: "win", cards: p2.hand, win_description: p2.description, lose_description: p1.description}
-      p1.result == p2.result ->
-        %K2poker.GameResult{player_id: "", status: "draw", cards: Enum.uniq(p1.hand ++ p2.hand), win_description: p1.description, lose_description: ""}
-    end
-    result
-  end
-
-  defp result_description(value) do
+  def result_description(value) do
     case value do
       10 -> "royal_flush"
       9 -> "straight_flush"
@@ -49,6 +35,20 @@ defmodule K2poker.ResultCalculator do
       2 -> "one_pair"
       1 -> "high_card"
     end
+  end
+
+  # check the results from the player rankings and build a K2poker.GameResult that is added to the :result key of the Game
+  #
+  defp create_result(p1, p2) do
+    result = cond do
+      p1.result > p2.result ->
+        %K2poker.GameResult{player_id: p1.id, status: "win", cards: p1.hand, win_description: p1.description, lose_description: p2.description}
+      p1.result < p2.result ->
+        %K2poker.GameResult{player_id: p2.id, status: "win", cards: p2.hand, win_description: p2.description, lose_description: p1.description}
+      p1.result == p2.result ->
+        %K2poker.GameResult{player_id: "", status: "draw", cards: Enum.uniq(p1.hand ++ p2.hand), win_description: p1.description, lose_description: ""}
+    end
+    result
   end
 
 end

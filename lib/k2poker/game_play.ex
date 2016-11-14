@@ -94,14 +94,20 @@ defmodule K2poker.GamePlay do
       0 -> Enum.at(game.players, 1)
       1 -> Enum.at(game.players, 0)
     end
+    table_cards = K2poker.Deck.from_strings(game.table_cards)
+    {{player_result, _}, best_cards} = K2poker.Ranking.best_possible_hand(table_cards, K2poker.Deck.from_strings(player.cards))
+    player_result = K2poker.ResultCalculator.result_description(player_result)
     #only return ready or new for the other_player status, not discard!
     other_player_status = if (other_player.status == "ready"), do: "ready", else: "new"
+    best_cards = K2poker.Deck.to_strings(best_cards)
     %{
       cards: player.cards,
       player_status: player.status,
       other_player_status: other_player_status,
       table_cards: game.table_cards,
       status: game.status,
+      hand_description: player_result,
+      best_cards: best_cards,
       result: game.result
     }
   end

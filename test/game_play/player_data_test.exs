@@ -62,4 +62,22 @@ defmodule GamePlay.PlayerDataTest do
     assert(player_data.result.lose_description == result.lose_description)
   end
 
+
+  test "player_data returns the players current best hand and cards", context do
+    player1 = context.player1
+    player2 = context.player2
+    game_play = context.game_play
+    table_cards = ["Ks", "Kh", "As", "Tc", "4d"]
+    player_cards = ["Ad", "Ah"]
+    player1 = %{player1 | cards: player_cards}
+    players = [player1, player2]
+    game_play = %{game_play | table_cards: table_cards, players: players}
+    game_play = K2poker.play(game_play, player1.id)
+    player_data = K2poker.player_data(game_play, player1.id)
+    assert(player_data.best_cards == ["Ah", "Ad", "As", "Kh", "Ks"])
+    assert(player_data.hand_description == "full_house")
+  end
+
+
+
 end

@@ -15,7 +15,7 @@ defmodule ResultCalculatorTest do
     table_cards = ["Ah", "Ac", "Kh","Qc", "Js"]
     player1 = %{context.player1 | cards: player1_cards, status: :new}
     player2 = %{context.player2 | cards: player2_cards, status: :ready}
-    game_play = %{context.game_play | status: :river, players: [player1, player2], table_cards: table_cards}
+    game_play = %{context.game_play | status: "river", players: [player1, player2], table_cards: table_cards}
     game_play = K2poker.ResultCalculator.calculate(game_play)
     assert game_play.result.player_id == "thelazycamel"
     assert Enum.sort(game_play.result.cards) == Enum.sort(["Ad", "As", "Ah", "Ac", "Kh"])

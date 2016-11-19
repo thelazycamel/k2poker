@@ -86,38 +86,12 @@ defmodule K2poker.GamePlay do
     %{game | players: players, result: game_result, status: "finished"}
   end
 
-  #TODO break down this long method
+  #TODO break down this long method probably into a new module
 
   @spec player_data(K2poker.Game.t, String.t) :: Map.t
 
   def player_data(game, player_id) do
-    {:ok, player, index} = get_player(game.players, player_id)
-    other_player = case index do
-      0 -> Enum.at(game.players, 1)
-      1 -> Enum.at(game.players, 0)
-    end
-    best_possible_hand = cond do
-      Enum.empty?(game.table_cards) -> {{0,""}, []}
-      true ->
-        table_cards = K2poker.Deck.from_strings(game.table_cards)
-        K2poker.Ranking.best_possible_hand(table_cards, K2poker.Deck.from_strings(player.cards))
-    end
-    {{player_result, _}, best_cards} = best_possible_hand
-    player_result = K2poker.ResultCalculator.result_description(player_result)
-    best_cards = K2poker.Deck.to_strings(best_cards)
-
-    #only return ready or new for the other_player status, not discard!
-    other_player_status = if (other_player.status == "ready"), do: "ready", else: "new"
-    %{
-      cards: player.cards,
-      player_status: player.status,
-      other_player_status: other_player_status,
-      table_cards: game.table_cards,
-      status: game.status,
-      hand_description: player_result,
-      best_cards: best_cards,
-      result: game.result
-    }
+    K2poker.SinglePlayerData.extract(game, player_id)
   end
 
   # PRIVATE
@@ -187,7 +161,7 @@ defmodule K2poker.GamePlay do
     %{game | status: "finished", players: players}
   end
 
-  defp get_player(players, player_id) do
+  def get_player(players, player_id) do
     find_player = fn(player) -> player.id == player_id end
     player = Enum.find(players, nil, find_player)
     index = Enum.find_index(players, find_player)

@@ -37,7 +37,7 @@ defmodule GamePlay.PlayerDataTest do
     assert context.player_data.other_player_status == "new"
     game_play = K2poker.discard(context.game_play, context.player2.id, 0)
     player_data = K2poker.player_data(game_play, context.player1.id)
-    assert player_data.other_player_status == "new"
+    assert player_data.other_player_status == "discarded"
     game_play = K2poker.play(game_play, context.player2.id)
     player_data = K2poker.player_data(game_play, context.player1.id)
     assert player_data.other_player_status == "ready"
@@ -55,9 +55,7 @@ defmodule GamePlay.PlayerDataTest do
     result = game_play.result
     player_data = K2poker.player_data(game_play, player1)
     assert(player_data.status == "finished")
-    assert(player_data.result.status == result.status)
-    assert(player_data.result.player_id == result.player_id)
-    assert(player_data.result.cards == result.cards)
+    assert(player_data.result.winning_cards == result.cards)
     assert(player_data.result.win_description == result.win_description)
     assert(player_data.result.lose_description == result.lose_description)
   end

@@ -2,6 +2,8 @@ defmodule K2poker.ResultCalculator do
 
   @spec calculate(K2poker.Game) :: K2poker.Game.t
 
+  #TODO this whole module is damn ugly, fix it!
+
   def calculate(game) do
     player1 = List.first(game.players)
     player2 = List.last(game.players)

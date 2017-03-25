@@ -175,7 +175,13 @@ defmodule K2poker.GamePlay do
   end
 
   defp set_all_players_status(players, status) do
-    Enum.map(players, fn(player) -> %{player | status: status} end)
+    Enum.map(players, fn(player) ->
+      status = case (player.id == "BOT" && status == "new") do
+        true -> "ready"
+        _ -> status
+      end
+      %{player | status: status}
+    end)
   end
 
   defp deal_card(deck, card_array) do

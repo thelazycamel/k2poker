@@ -86,8 +86,6 @@ defmodule K2poker.GamePlay do
     %{game | players: players, result: game_result, status: "finished"}
   end
 
-  #TODO break down this long method probably into a new module
-
   @spec player_data(K2poker.Game.t, String.t) :: Map.t
 
   def player_data(game, player_id) do

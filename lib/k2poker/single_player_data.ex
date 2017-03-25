@@ -53,7 +53,7 @@ defmodule K2poker.SinglePlayerData do
     result = game.result
     status = cond do
       result.status == "in_play" -> "in_play"
-      result.status == "folded" -> "folded"
+      result.status == "folded" -> if (player.id == result.player_id), do: "folded", else: "other_player_folded"
       result.status == "draw" -> "draw"
       (result.status == "win") && (result.player_id == player.id) -> "win"
       true -> "lose"
@@ -69,6 +69,8 @@ defmodule K2poker.SinglePlayerData do
     }
   end
 
+  #TODO think about not return other players cards if they have folded
+  #
   defp get_other_players_cards(game, index) do
     if game.status == "finished" do
       other_player = get_other_player(game, index)

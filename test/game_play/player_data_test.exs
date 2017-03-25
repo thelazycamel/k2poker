@@ -60,7 +60,6 @@ defmodule GamePlay.PlayerDataTest do
     assert(player_data.result.lose_description == result.lose_description)
   end
 
-
   test "player_data returns the players current best hand and cards", context do
     player1 = context.player1
     player2 = context.player2
@@ -76,6 +75,19 @@ defmodule GamePlay.PlayerDataTest do
     assert(player_data.hand_description == "full_house")
   end
 
+  test "player_data returns folded info if the player has folded", context do
+    player1_id = context.player1.id
+    game_play = K2poker.fold(context.game_play, player1_id)
+    player_data =  K2poker.player_data(game_play, player1_id)
+    assert(player_data.result.status == "folded")
+  end
 
+  test "player_data returns folded info if the other player has folded", context do
+    player1_id = context.player1.id
+    player2_id = context.player2.id
+    game_play = K2poker.fold(context.game_play, player2_id)
+    player_data =  K2poker.player_data(game_play, player1_id)
+    assert(player_data.result.status == "other_player_folded")
+  end
 
 end

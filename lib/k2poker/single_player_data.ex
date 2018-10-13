@@ -69,10 +69,8 @@ defmodule K2poker.SinglePlayerData do
     }
   end
 
-  #TODO think about not return other players cards if they have folded
-  #
   defp get_other_players_cards(game, index) do
-    if game.status == "finished" do
+    if game.status == "finished" and game.result.status != "folded" do
       other_player = get_other_player(game, index)
       other_player.cards
     else

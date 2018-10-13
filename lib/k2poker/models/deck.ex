@@ -5,17 +5,17 @@ defmodule K2poker.Deck do
   @max_shuffles 5000
 
   def unshuffled_deck do
-    for rank <- ranks, suit <- suits do
+    for rank <- ranks(), suit <- suits() do
       %K2poker.Card{rank: rank, suit: suit}
     end
   end
 
   def shuffled do
-    unshuffled_deck |> super_shuffle(number_of_shuffles)
+    unshuffled_deck() |> super_shuffle(number_of_shuffles())
   end
 
   def shuffled_strings do
-    unshuffled_deck |> super_shuffle(number_of_shuffles) |> to_strings
+    unshuffled_deck() |> super_shuffle(number_of_shuffles()) |> to_strings()
   end
 
   def number_of_shuffles do

@@ -3,7 +3,7 @@ defmodule K2poker.Mixfile do
 
   def project do
     [app: :k2poker,
-     version: "1.0.3",
+     version: "1.1.0",
      elixir: "~> 1.5",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,

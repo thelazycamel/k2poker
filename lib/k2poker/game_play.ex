@@ -80,8 +80,12 @@ defmodule K2poker.GamePlay do
 
   def fold(game, player_id) do
     {:ok, player, index} = get_player(game.players, player_id)
+    other_player_index = if index == 0, do: 1, else: 0
+    {:ok, other_player} = Enum.fetch(game.players, other_player_index)
     player = %{player | status: "folded"}
+    other_player = %{other_player | status: "other_player_folded"}
     players = List.replace_at(game.players, index, player)
+    |> List.replace_at(other_player_index, other_player)
     game_result = %K2poker.GameResult{player_id: player_id, status: "folded", cards: [], win_description: "folded", lose_description: "folded"}
     %{game | players: players, result: game_result, status: "finished"}
   end

@@ -35,7 +35,10 @@ defmodule GamePlay.FoldTest do
   test "#fold should not show the folded players cards", context do
     game_play = K2poker.GamePlay.fold(context.game_play, "thelazycamel")
     player_data = K2poker.SinglePlayerData.extract(game_play, "thelazycamel")
+    other_player_data = K2poker.SinglePlayerData.extract(game_play, "bob")
     assert player_data.result.status == "folded"
+    assert player_data.player_status == "folded"
+    assert other_player_data.player_status == "other_player_folded"
     assert Enum.count(player_data.result.other_player_cards) == 0
   end
 
